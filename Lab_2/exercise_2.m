@@ -6,7 +6,7 @@ clear
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % An absolute path to the video file
-videoPath = 'E:/Projects/PERM-Laboratorium/Lab_2/data/pulse.mp4';
+videoPath = 'E:/Projects/PERM-Laboratorium/Lab_2/data/video/pulse.mp4';
 
 % Number of frames to load
 numberOfFrames = 300; 
@@ -27,7 +27,7 @@ if isfile(savePath)
 % Otherwise compute and save
 else
     brightness = movie2brightness(videoPath, numberOfFrames);
-    save(savePath, brightness);
+    save(savePath, 'brightness');
     
 end
 
