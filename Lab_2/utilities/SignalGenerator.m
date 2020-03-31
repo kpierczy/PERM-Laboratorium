@@ -3,6 +3,8 @@ classdef SignalGenerator
     properties
         % Sampling frequency [Hz]
         Fs {mustBePositive, mustBeInteger} = 1000
+        % Random noise
+        noise logical = false
     end
     
     properties (Access = private)
@@ -19,7 +21,12 @@ classdef SignalGenerator
     methods
         
         % Default constructor
-        function obj = SignalGenerator()
+        %
+        % @param samplingFreq [Hz]
+        %
+        function obj = SignalGenerator(samplingFreq, noise)
+            obj.Fs = samplingFreq;
+            obj.noise = noise;
         end
         
         % Generates signal of a specified length according
@@ -29,27 +36,35 @@ classdef SignalGenerator
         %
         function [t_base ,x] = generate(obj, length)
             
-            T = length/obj.Fs; % Sampling perios
-            t_base = (0:length*obj.Fs) * T; % Time base
-            x = zeros(size(t_base));
+            T = 1 / obj.Fs; % Sampling period
+            t_base = (0 : length / T - 1) * T; % Time base
+            x = zeros(size(t_base)); % Signal
+            
+            % Generate signal
             for i = 1:obj.N
               x = x + obj.amplitudes(i) * cos(2 * pi * obj.frequencies(i) * t_base + obj.phaseShifts(i));
             end
             
+            % Add gauusian noise
+            if obj.noise
+               x = x + randn(size(x)); 
+            end                       
         end
         
         % Sets number of components. Sets all amplitudes,
-        % frequencies and phase 
+        % frequencies and phase shifts to 0.
         %
         % @param num
         %
         function obj = setComponentsNum(obj, num)
             
             if num < 1
-                throw error
+                error('Number of components have to be positive!')
             else
-                obj.N= num;
-                
+                obj.N = num;
+                obj.amplitudes = zeros(obj.N, 1);
+                obj.frequencies = zeros(obj.N, 1);
+                obj.phaseShifts = zeros(obj.N, 1);
             end
             
         end
@@ -62,7 +77,7 @@ classdef SignalGenerator
         function obj = setAmplitudes(obj, amplitudes)
             
             if size(amplitudes, 1) ~= obj.N
-                throw error
+                error('Number of amplitudes does not match number of components!')
             else
                 obj.amplitudes = amplitudes;
             end
@@ -77,7 +92,7 @@ classdef SignalGenerator
         function obj = setFrequencies(obj, frequencies)
             
             if size(frequencies, 1) ~= obj.N
-                throw error
+                error('Number of frequencies does not match number of components!')
             else
                 obj.frequencies = frequencies;
             end
@@ -92,7 +107,7 @@ classdef SignalGenerator
         function obj = setPhaseShifts(obj, shifts)
             
             if size(shifts, 1) ~= obj.N
-                throw error
+                error('Number of phase shifts does not match number of components!')
             else
                 obj.phaseShifts = shifts;
             end
