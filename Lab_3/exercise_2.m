@@ -1,9 +1,12 @@
-function [y] = filter_iir(cutoff, type, pass)
-    [data,fs]=audioread('data/20200416_150545.m4a');
+function [y] = exercise_2(cutoff, type, pass)
+
+    %read file
+    [data,fs]=audioread('record_3.m4a');
     
+    %choose filter type
     switch (type)
         case 'low-pass'
-            k = exp(-2*pi*cutoff/fs)
+            k = exp(-2*pi*1.1*cutoff/fs);
             
             y = zeros(size(data, 1),1);
             x = data(:,2);
@@ -15,7 +18,7 @@ function [y] = filter_iir(cutoff, type, pass)
                 y(i) = a_0*x(i) + b_1*y(i-1);
             end
         case 'high-pass'
-            k = exp(-2*pi*cutoff/fs)
+            k = exp(-2*pi*0.9*cutoff/fs);
             
             y = zeros(size(data, 1),1);
             x = data(:,2);
@@ -28,7 +31,6 @@ function [y] = filter_iir(cutoff, type, pass)
             for i = 2 : 1 : size(data,1)
                 y(i) = a_0*x(i) + a_1*x(i-1) + b_1*y(i-1);
             end
-            
             
         case 'band-pass'
             
@@ -57,25 +59,7 @@ function [y] = filter_iir(cutoff, type, pass)
     win_overlap = 256;
     nfft = 512;
     figure
-    spectrogram(y, win_len, win_overlap, nfft, fs, 'MinThreshold', -100, 'yaxis')
+    spectrogram(y, win_len, win_overlap, nfft, fs, 'MinThreshold', -100, 'yaxis');
             
 end
-%         case 'high-pass'
-%             k = exp(-2*pi*cutoff/fs)
-%             
-%             y = zeros(size(data, 1),1);
-%             x = data(:,2);
-%             x(1) = 0;
-%             
-%             a_0 = (1 - k)^4;
-%             b_1 = 4*k;
-%             b_2 = -6*k^2;
-%             b_3 = 4*k^3;
-%             b_4 = -1*k^4;
-%             
-%             for i = 5 : 1 : size(data,1)
-%                 y(i) = a_0*x(i) + b_1*y(i-1) + b_2*y(i-2) + b_3*y(i-3) + b_4*y(i-4);
-%             end
-%                 y = -1*y;
-%                 y(size(y,1)/2) = y(size(y,1)/2) + 1;
 

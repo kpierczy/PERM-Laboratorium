@@ -62,4 +62,4 @@ end
 %======================== Cleaning ===========================%
 %=============================================================%
 
-clearvars -except distance
+clearvars -except distance pingFiltered
