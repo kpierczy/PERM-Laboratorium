@@ -1,0 +1,51 @@
+function [y] = filter_iir(cutoff, type)
+    [data,fs]=audioread('data/20200416_150545.m4a');
+    
+    switch (type)
+        case 'low-pass'
+            k = exp(-2*pi*cutoff/fs)
+            
+            y = zeros(size(data, 1),1);
+            x = data(:,2);
+            
+            a_0 = 1 - k;
+            b_1 = k;
+            
+            for i = 2 : 1 : size(data,1)
+                y(i) = a_0*x(i) + b_1*y(i-1);
+            end
+        case 'high-pass'
+            k = exp(-2*pi*cutoff/fs)
+            
+            y = zeros(size(data, 1),1);
+            x = data(:,2);
+            x(1) = 0;
+            
+            a_0 = (1 - k)^4;
+            b_1 = 4*k;
+            b_2 = -6*k^2;
+            b_3 = 4*k^3;
+            b_4 = -1*k^4;
+            
+            for i = 2 : 1 : size(data,1)
+                y(i) = a_0*x(i) + b_1*y(i-1) + b_2*y(i-2) + b_3*y(i-1) + b_4*y(i-1);
+            end
+                
+            
+            
+        case 'band-pass'
+            y = zeros(size(data, 1),1);
+            x = data(:,2);
+            y=x;
+        otherwise
+            warning('wrong filter type')            
+    end
+
+    win_len = 512;
+    win_overlap = 256;
+    nfft = 512;
+    figure
+    spectrogram(y, win_len, win_overlap, nfft, fs, 'MinThreshold', -100, 'yaxis')
+            
+end
+

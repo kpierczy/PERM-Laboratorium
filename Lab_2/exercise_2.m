@@ -6,7 +6,11 @@ clear
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % An absolute path to the video file
-videoPath = 'E:/Projects/PERM-Laboratorium/Lab_2/data/video/pulse.mp4';
+
+% [file, path] = uigetfile('.mp4');
+% file
+% path
+% videoPath = strcat(path, file);
 
 % Number of frames to load
 framesNumber = 300; 
@@ -21,7 +25,7 @@ frameRate = 30;
 method = 3;
 
 % Plotting options
-plots = false;
+plots = true;
 plotPulse = true;
 plotAutocorrelation = true;
 plotSpectrum = true;
@@ -31,9 +35,10 @@ plotSpectrum = true;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Get path of the 'brightness' serialization
+
 [filepath,~,~] = fileparts(mfilename('fullpath'));
 savePath = strcat(filepath, '/data/brightness.mat');
-
+%savePath = '';
 % Load brightness vector if saved
 if isfile(savePath)
     load = matfile(savePath);
@@ -41,6 +46,7 @@ if isfile(savePath)
     
 % Otherwise compute and save
 else
+    addpath('utilities\')
     brightness = movie2brightness(videoPath, framesNumber);
     save(savePath, 'brightness');
     

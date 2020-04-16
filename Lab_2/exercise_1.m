@@ -5,8 +5,8 @@ clear
 %%%%%%%%%%%%%%%%%%%%%%%%%% Configuration %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-samplingFreq = 10000; % Sampling frequency [Hz]
-length = 3; % Signal's length [s]
+samplingFreq = 1000; % Sampling frequency [Hz]
+length = 1; % Signal's length [s]
 
 componentsNum = 4; % Number of components in the signal
 amplitudes = [1.0; 0.4; 0.8; 0.65]; % Components amplitudes
@@ -18,7 +18,7 @@ noise = true; % Noise component (gauusian noise)
 plotSignal = true;
 plotRevivedSignal = true;
 plotAmp = true;
-plotPhase = false;
+plotPhase = true;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%% Initialization %%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -37,12 +37,18 @@ N = length * samplingFreq;
 
 % Construct a default generator
 gen  = SignalGenerator(samplingFreq, noise);
+gen1  = SignalGenerator(samplingFreq, false);
 
 % Configure generator's components
 gen = gen.setComponentsNum(componentsNum);
 gen = gen.setAmplitudes(amplitudes);
 gen = gen.setFrequencies(frequencies);
 gen = gen.setPhaseShifts(phaseShifts);
+
+gen1 = gen1.setComponentsNum(componentsNum);
+gen1 = gen1.setAmplitudes(amplitudes);
+gen1 = gen1.setFrequencies(frequencies);
+gen1 = gen1.setPhaseShifts(phaseShifts);
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -51,6 +57,7 @@ gen = gen.setPhaseShifts(phaseShifts);
 
 % Generate signal
 [t, x] = gen.generate(length);
+[t_b, x_b] = gen1.generate(length);
 
 % Compute FFT
 spectrum = fft(x);
@@ -97,9 +104,25 @@ end
 if plotSignal
     figure;
     plot(t, x);
+    legend('base signal')
     if noise && plotRevivedSignal
         hold on
         plot(t, x_revived);
+        legend('base signal with noise','retrieved signal')
+    end
+    xlabel('Time [s]')
+    ylabel('Amplitude')
+end
+
+% Signal plotting
+if true
+    figure;
+    plot(t_b, x_b);
+    legend('base signal')
+    if noise && plotRevivedSignal
+        hold on
+        plot(t, x_revived);
+        legend('base signal without noise','retrieved signal')
     end
     xlabel('Time [s]')
     ylabel('Amplitude')
@@ -111,6 +134,7 @@ if plotAmp
     plot(f, A);
     xlabel('Frequency [Hz]')
     ylabel('Amplitude')
+    axis([0 25 0 1.1])
 end
 
 if plotPhase
