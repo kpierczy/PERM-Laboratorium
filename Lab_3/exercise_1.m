@@ -5,14 +5,15 @@ clc
 %====================== Configuration ========================%
 %=============================================================%
 
-% If set to true computations are not performed
+% If set to true computations are not performed;
+% only the spectrogram from the previous run is printed
 PrintOnly = true;
 
-% Number of the record (index in the 'RecordNames' array) to
+% Index of the record (index in the 'RecordNames' array) to
 % be plotted at the spectrogram
 RecordToPrint = 3;
 
-% Number of the filter (row index in the 'FiltersParams' array)
+% Index of the filter (row of the index in the 'FiltersParams' array)
 % to be plotted at the spectrogram. If the 0 is given, the
 % original record will be printed.
 FilterToPrint = 5;
@@ -33,7 +34,7 @@ if not(PrintOnly)
         'record_3.m4a'
     ];
 
-    % Filter's parameters (frequencies in [Hz]). Subsequent
+    % Filters' parameters (frequencies in [Hz]). Subsequent
     % rows conatain parameters for a single filter each.
     %
     % I column   : filter's type
