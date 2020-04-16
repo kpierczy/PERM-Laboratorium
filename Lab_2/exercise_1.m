@@ -5,7 +5,7 @@ clear
 %%%%%%%%%%%%%%%%%%%%%%%%%% Configuration %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-samplingFreq = 10000; % Sampling frequency [Hz]
+samplingFreq = 100; % Sampling frequency [Hz]
 length = 3; % Signal's length [s]
 
 componentsNum = 4; % Number of components in the signal
@@ -13,7 +13,7 @@ amplitudes = [1.0; 0.4; 0.8; 0.65]; % Components amplitudes
 frequencies = [12; 8; 15; 20]; % Components frequencies [Hz]
 phaseShifts = [0; -pi/3; pi/7; pi]; % Components phase shifts
 
-noise = true; % Noise component (gauusian noise)
+noise = false; % Noise component (gauusian noise)
 
 plotSignal = true;
 plotRevivedSignal = true;
