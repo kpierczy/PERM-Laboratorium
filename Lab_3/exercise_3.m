@@ -25,38 +25,14 @@ Fs = 200000;
 % Sonar's band [Hz]
 Fb = 40000;
 
-% Filter's bandwidth [% of the Fs]
-BW = 0.01;
-
-% Filter's roll-off [% of the Fs]
-rollOff = 0.01;
 
 %=============================================================%
 %======================= Computation =========================%
 %=============================================================%
 
 % Compute distance from the object
-distance = sonarDistance(ping, Fs, Fb);
+[distance, pingFiltered] = sonarDistance(ping, Fs, Fb);
 
-% Configure band-pass filter to filter the sonar echo
-%
-% @note : filtration is not required to distinguish
-%         ping signal's echo from the noise basing
-%         on the echo's STFT. Spectrogram of the filtered
-%         signal look cool though.
-%
-% @see FilterFIR.m for parameters description
-filter = FilterFIR( ...
-    'BandPass', Fs, ...
-    [Fb - BW * Fs / 2 ;  Fb + BW * Fs / 2], ...
-    rollOff * Fs ...
-);
-h = filter.getImpulseResponse();
-
-% Filter sonar's echo
-pingFiltered = conv(ping, h);
-% Trim additional samples produced by convolution
-pingFiltered = pingFiltered(1:(end - size(h, 2) + 1));
 
 %=============================================================%
 %========================= Plotting ==========================%

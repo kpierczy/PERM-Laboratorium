@@ -7,20 +7,24 @@
 % @param Fb : sonar band's frequency [Hz]
 %
 % @return distance from the object [m]
+%
+% Function contains a few attributes that can be tuned.
 %======================================================%
-function distance = sonarDistance(sig, Fs, Fb)
+
+function [distance, pingFiltered] = sonarDistance(ping, Fs, Fb)
 
 %==================== Configuration ===================%
+
+% Filter's bandwidth [% of the Fs]
+BW = 0.01;
+
+% Filter's roll-off [% of the Fs]
+rollOff = 0.01;
 
 % Spectrogram Parameters
 WinLen = 0.0025 * Fs;
 NTFFT = 0.0025 * Fs;
 WinOverlap = WinLen / 2;
-
-% Width of the range of frequencies around the
-% Fb band that will be searched to obtain ping
-% signal's echo [Hz]
-searchRange = Fb * 0.04;
 
 % Threshold for the ping's echo detection
 THRESHOLD = 100;
@@ -30,22 +34,47 @@ SOUND_VELOCITY =  343;
 
 %===================== Computation ====================%
 
-% Get the spectrogramm
-[~, F, T, P] = spectrogram(sig, WinLen, WinOverlap, NTFFT, Fs, 'MinThreshold', -100, 'yaxis'); 
+% Configure band-pass filter to filter the sonar echo
+%
+% @note : filtration is not required to distinguish
+%         ping signal's echo from the noise basing
+%         on the echo's STFT. Spectrogram of the filtered
+%         signal look cool though.
+%
+% @see FilterFIR.m for parameters description
+filter = FilterFIR( ...
+    'BandPass', Fs, ...
+    [Fb - BW * Fs / 2 ;  Fb + BW * Fs / 2], ...
+    rollOff * Fs ...
+);
+h = filter.getImpulseResponse();
 
-% Get indeces of the P matrix rows that represent 
-% a range of frequencies around the sonar band's 
-% frequency
-L = find(F > Fb - searchRange / 2);
-H = find(F < Fb + searchRange / 2);
-searchBand = intersect(L, H);
+% Filter sonar's echo
+pingFiltered = conv(ping, h);
+% Trim additional samples produced by convolution
+pingFiltered = pingFiltered(1:(end - size(h, 2) + 1));
+
+% Get the spectrogramm
+[~, ~, T, P] = spectrogram(pingFiltered, WinLen, WinOverlap, NTFFT, Fs, 'MinThreshold', -100, 'yaxis'); 
+
+% Find the first non-zero chunk of the PSD (Power Spectral Density)
+%
+% @note : If we initialize previousChunk with a zero vector, the
+%         first non-zero chunk will meet the THRESHOLD and object
+%         will be mistakenly detected
+for time_index = 2:size(P, 2)
+   if norm(P(:, time_index)) ~= 0
+      previousChunk =  P(:, time_index);
+      break
+   end
+   previousChunk =  P(:, end);
+end
 
 % Search the band
-previousChunk = P(searchBand, 1);
 for time_index = 2:size(P, 2)
     
     % Get the chunk (set of samples at the given moment)
-    actualChunk = P(searchBand, time_index);
+    actualChunk = P(:, time_index);
     
     % Compare magnitudes of the actual chunk and the previous one
     if norm(actualChunk) > norm(previousChunk) * THRESHOLD
