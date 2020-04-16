@@ -22,24 +22,20 @@ classdef FilterFIR
     properties (Access = public)
                  
         % Filter's sampling frequency [Hz]
-        Fs (1, 1) uint32 {mustBeInteger, mustBeGreaterThan(Fs, 0)} = 1
+        Fs (1, 1) double {mustBeReal, mustBeNonnegative} = 1
     
         % Cut-off frequencies. For 'BandPass' and
         % 'BandReject' Fc holds pair of lower (Fc(1))
         % and higher cut-off frequencies (Fc(2)).
         % 
-        % @note It is expressed as a fraction of the
-        %       sampling frequency in range [0; 0.5].
-        Fc (2, 1) double {mustBeReal, mustBeGreaterThan(Fc, 0), ...
-                          mustBeLessThan(Fc, 0.5)} = [0.25; 0.25]
+        % @note : frequencies are expressed in [Hz]
+        Fc (2, 1) double {mustBeReal, mustBeNonnegative} = [0.25; 0.25]
         
         % Roll-off width. For 'BandPass' 
         % and 'BandReject' this value refers to both slopes
         %
-        % @note It is expressed as a fraction of the
-        %       sampling frequency in range [0; 0.5].
-        rollOff (1,1) double {mustBeReal, mustBeNonnegative, ...
-                              mustBeLessThanOrEqual(rollOff, 0.5)} = 0.25
+        % @note : frequencies are expressed in [Hz]
+        BW double {mustBeReal, mustBeNonnegative} = 0.25
         
         % Type of the window being used to smooth the
         % sinc filter. Available windows are:
@@ -64,32 +60,40 @@ classdef FilterFIR
         % @param fs : @seeFilterFIR.Fs
         % @param fc : Cut-off frequency / frequencies [Hz] 
         %             @seeFilterFIR.Fc
-        % @param rolloff : Roll-off width [Hz]
-        %                  @seeFilterFIR.rollOff
+        % @param BW : Roll-off width [Hz]
+        %             @seeFilterFIR.BW
         %
         % @note Fs and Fc attributes are expressed as a fraction
         % of the sampling frequency, but corresponding arguments
         % to the constructor should be passed in [Hz]
-        function obj = FilterFIR(type, fs, fc, rolloff)
+        function obj = FilterFIR(type, fs, fc, BW)
             mustBeMember(type, {'LowPass', 'HighPass', ...
                                 'BandPass', 'BandReject'})
             obj.Type = type;
             
-            mustBeInteger(fs);
-            mustBeGreaterThan(fs, 0);
+            mustBeReal(fs);
+            mustBeNonnegative(fs);
             obj.Fs = fs;
             
-            fc = double(fc) / double(obj.Fs);
             mustBeReal(fc);
-            mustBeGreaterThan(fc, 0);
-            mustBeLessThan(fc, 0.5);
+            if ismember(obj.Type, {'LowPass', 'HighPass'})
+                fc(2) = fc(1);
+            end
+            mustBeNonnegative(fc);
             obj.Fc = fc;
-            
-            rolloff = double(rolloff) / double(obj.Fs);
-            mustBeReal(rolloff);
-            mustBeGreaterThan(rolloff, 0);
-            mustBeLessThan(rolloff, 0.5);
-            obj.rollOff= rolloff;
+
+            mustBeReal(BW);
+            mustBeNonnegative(fc);
+            obj.BW = BW;
+        end
+        
+        % Simple function to check if Fc/Fs and BW/Fs
+        % ratios are valid.
+        function valid = validate(obj)
+            valid = true;
+            if (obj.Fc(1) * 2 >= obj.Fs) || (obj.Fc(2) * 2 >= obj.Fs) ||(obj.BW * 2 >= obj.Fs)
+               valid = false; 
+            end
         end
         
         % Returns impulse response for a configured filter
@@ -98,13 +102,13 @@ classdef FilterFIR
             % Call an appropriate function basing on the Type
             switch obj.Type
                 case 'LowPass'
-                    h = obj.lowPass(obj.Fc(1), obj.rollOff);
+                    h = obj.lowPass(obj.Fc(1), obj.BW);
                 case 'HighPass'
-                    h = obj.highPass(obj.Fc(1), obj.rollOff);
+                    h = obj.highPass(obj.Fc(1), obj.BW);
                 case 'BandPass'
-                    h = obj.bandPass(obj.Fc, obj.rollOff);
+                    h = obj.bandPass(obj.Fc, obj.BW);
                 case 'BandReject'
-                    h = obj.bandReject(obj.Fc, obj.rollOff);
+                    h = obj.bandReject(obj.Fc, obj.BW);
             end
         end
         
@@ -124,10 +128,22 @@ classdef FilterFIR
         % @param fc : cou-off frequency
         % @param BW : roll-off width
         %
-        % @note Both parameters are given as a fraction of the 
-        % sampling frequency
+        % @note Both parameters are given in [Hz]
         function h = lowPass(obj, fc, BW)
 
+            % Validate filter's state
+            %
+            % @note : It is enough to validate filter's state
+            %         only in the lowPass() function, as all other
+            %         filters use it internally
+            if not(obj.validate())
+               error('Filter invalid!') 
+            end
+            
+            % Scale cut-off frequencies and roll-off
+            fc = fc / obj.Fs;
+            BW = BW / obj.Fs;
+            
             % Compute kernel's length
             M = floor(4 / BW);
             if rem(M, 2) ~= 0
@@ -136,19 +152,14 @@ classdef FilterFIR
 
             % Initialize kernel with a K parameter equal to 1
             n = 0 : M;
+            
             switch obj.windowType
                 case 'blackman'
-                    h = sin(2*pi*fc*(n-M/2)) ./ ...
-                        (n-M/2) .*...
-                        blackman(M + 1)';
+                    h = sin(2*pi*fc*(n-M/2)) ./ (n-M/2) .* blackman(M + 1)';
                 case 'hamming'
-                    h = sin(2*pi*fc*(n-M/2)) ./ ...
-                        (n-M/2) .*...
-                        hamming(M + 1)';
+                    h = sin(2*pi*fc*(n-M/2)) ./ (n-M/2) .* hamming(M + 1)';
                 case 'hanning'
-                    h = sin(2*pi*fc*(n-M/2)) ./ ...
-                        (n-M/2) .*...
-                        hanning(M + 1)';
+                    h = sin(2*pi*fc*(n-M/2)) ./ (n-M/2) .* hanning(M + 1)';
             end
             h(M/2 + 1) = 2 * pi * fc;
 
@@ -163,12 +174,14 @@ classdef FilterFIR
         % @param fc : cou-off frequency
         % @param BW : roll-off width
         %
-        % @note Both parameters are given as a fraction of the 
-        % sampling frequency
+        % @note Both parameters are given in [Hz]
         function h = highPass(obj, fc, BW)
            
             % Get low pass filter
             h = obj.lowPass(fc, BW); 
+            
+            % Scale BW
+            BW = BW / obj.Fs;
             
             % Compute kernel's length
             M = floor(4 / BW);
@@ -188,8 +201,7 @@ classdef FilterFIR
         % @param fc : cou-off frequency ([2; 1] array)
         % @param BW : roll-off width
         %
-        % @note Both parameters are given as a fraction of the 
-        % sampling frequency
+        % @note Both parameters are given in [Hz]
         function h = bandReject(obj, fc, BW)
            
             % Get component filters
@@ -207,8 +219,7 @@ classdef FilterFIR
         % @param fc : cou-off frequency ([2; 1] array)
         % @param BW : roll-off width
         %
-        % @note Both parameters are given as a fraction of the 
-        % sampling frequency
+        % @note Both parameters are given in [Hz]
         function h = bandPass(obj, fc, BW)
            
             % Get component filters
