@@ -15,14 +15,14 @@ x = ptCloud(:,:,1);
 y = ptCloud(:,:,2);
 z = ptCloud(:,:,3);
 % threshold point cloud
-x(x < xl | x > xu) = NaN; 
-y(y < yl | y > yu) = NaN;
-z(z < zl | z > zu) = NaN;
+x(x < xl | x > xu) = 0; 
+y(y < yl | y > yu) = 0;
+z(z < zl | z > zu) = 0;
 
 for i = 1:size(z, 1)
     for j = 1:size(z, 2)
         if (z(i, j) < 7*y(i, j) - 4)
-            z(i, j) = NaN;
+            z(i, j) = 0;
         end
     end
 end
