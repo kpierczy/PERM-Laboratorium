@@ -1,7 +1,8 @@
 close all
 
-dataSetLeft = dir('auvsi-cv-stereoVision/exercises/media/RecordedImages/left')
-dataSetRight = dir('auvsi-cv-stereoVision/exercises/media/RecordedImages/right')
+% Read dataSet directories
+dataSetLeft = dir('auvsi-cv-stereoVision/exercises/media/RecordedImages/left');
+dataSetRight = dir('auvsi-cv-stereoVision/exercises/media/RecordedImages/right');
 
 sizeLeft = size(dataSetLeft);
 sizeRight = size(dataSetRight);
@@ -10,46 +11,43 @@ sizeRight = size(dataSetRight);
 num = 10
 
 
-for i = 3 : 1 : 30
-    frameLeftDir = dataSetLeft(i)
-    frameRightDir = dataSetRight(i)
+for i = 7 : 1 : 183
+    % Load image for further computation
+    frameLeftDir = dataSetLeft(i);
+    frameRightDir = dataSetRight(i);
     
     frameLeft = imread(strcat(frameLeftDir.folder(),'\', frameLeftDir.name()));
     frameRight = imread(strcat(frameRightDir.folder(),'\', frameRightDir.name()));
     
+    % Clear, allign frames
     [frameLeftRect, frameRightRect] = ...
         rectifyStereoImages(frameLeft, frameRight, stereoParams);
     
-    %figure
-    imshow(stereoAnaglyph(frameLeftRect(361:560,:,:), frameRightRect(361:560,:,:)));
+    % Show cropped image
+
     
     frameLeftGray  = rgb2gray(frameLeftRect);
     frameRightGray = rgb2gray(frameRightRect);
-
+    
+    % Create disparity map
     disparityMap = disparitySGM(frameLeftGray, frameRightGray, 'DisparityRange', [0 96]);
     
-    %disparityMap = disparityMap(361:560,636:935)
-%     figure;
-%     imshow(disparityMap(361:560,636:935), [0, 128]);
-%     title('Disparity Map');
-%     colormap jet
-%     colorbar
     
     points3D = reconstructScene(disparityMap, stereoParams);
     
 
     % Convert to meters and create a pointCloud object
     points3D = points3D ./ 1000;
-    thresholds=[-1 1;0 6;3 50];  %-3 3 0 6 7 30
-    points3D = thresholdPC(points3D,thresholds);
-    ptCloud = pointCloud(points3D, 'Color', frameLeftRect);
-    ptCloud = pointCloud(ptCloud.Location(361:560,:,:),'Color', ptCloud.Color(361:560,:,:));
 
-    loc = ptCloud.Location();
-    z  = loc(:,:,3);
-    y  = loc(:,:,2);
-    x  = loc(:,:,1);
-    nnz(~isnan(z));
+    thresholds=[-2.5 1.5;2 6;7 50];  %-3 3 0 6 7 30
+    points3D = thresholdPC(points3D,thresholds);
+    %ptCloud = pointCloud(points3D, 'Color', frameLeftRect);
+    %ptCloud = pointCloud(ptCloud.Location(361:560,:,:),'Color', ptCloud.Color(361:560,:,:));
+
+    loc = points3D;
+    z  = loc(361:560,636:935,3);
+    y1  = loc(361:560,636:935,2);
+    x1  = loc(361:560,636:935,1);
     
     z(isnan(z)) = 0; % get rid of nans
     z(z == Inf) = 0; % get rid of Infs
@@ -65,6 +63,7 @@ for i = 3 : 1 : 30
             end
         end
     end
+
     
     for x = 1 : 1 : w 
         for y = 2 : 1 : h - 1
@@ -82,11 +81,13 @@ for i = 3 : 1 : 30
     
     carDetected = [];
     
-    for sizeCarX = 100 : -1 : 17
+    
+    
+    for sizeCarX = 90 : -1 : 15
         %sizeCarX = 0
-        sizeCarY = 1;
+        sizeCarY = 10 + floor(sizeCarX/10) ;
 
-        distanceCar = 1350 / sizeCarX; 
+        distanceCar = 1300 / sizeCarX; 
         areaCar = sizeCarX * sizeCarY * distanceCar;
 
         for x = 1 : sizeCarX : w - sizeCarX
@@ -98,14 +99,16 @@ for i = 3 : 1 : 30
 
                 regionSum = topLeft - topRight + bottomRight - bottomLeft;
 
-                if regionSum > 0.99 * areaCar && regionSum < 1.01 * areaCar
-                    if var(z(y:y+sizeCarY,x:x+sizeCarX)) < 5
-                        carDetected = [carDetected; [x,y, sizeCarX, sizeCarY, distanceCar]];
+                if regionSum > 0.7 * areaCar && regionSum < 1.3 * areaCar
+                    if size(find(z(y:y+sizeCarY,x:x+sizeCarX) == 0) ,1) == 0
+                        dist = min(z(y:y+sizeCarY,x:x+sizeCarX), [], 'all');
+                        carDetected = [carDetected; [x,y, sizeCarX, sizeCarY, dist]];
                     end
                 end
             end
         end
     end
+% Code as above with vertical Vectors
 %     for sizeCarY = 50 : -1 : 20
 %         %sizeCarX = 0
 %         sizeCarX = 2;
@@ -130,12 +133,21 @@ for i = 3 : 1 : 30
 %     end
     
  
-  
-    hold on
+    figure
+    imshow(stereoAnaglyph(frameLeftRect(361:560,636:935,:), frameRightRect(361:560,636:935,:)));
+    
+    croppedCarDetected = = floor(carDetected())
     for i = 1 : 1 : size(carDetected,1)
         rectangle('Position', carDetected(i,1:4),...
                     'EdgeColor','r', 'LineWidth', 1)
+        text(double(carDetected(i,1:1) - 10),double(carDetected(i,2:2) -20), ...
+                strcat(num2str(carDetected(i,5:5)), 'm'), ...
+                'Color', 'Red');
     end
+    
+    name = frameLeftDir.name();
+    name = name(1:end-4);
+    savePlot(strcat('detection/',name));
 
     
     drawnow
