@@ -55,6 +55,7 @@ worldPoints = generateCheckerboardPoints(boardSize, squareSize);
     'InitialIntrinsicMatrix', [], 'InitialRadialDistortion', [], ...
     'ImageSize', [mrows, ncols]);
 
+<<<<<<< HEAD
 if plot
     
     % View reprojection errors
@@ -64,6 +65,17 @@ if plot
     h2=figure; showExtrinsics(cameraParamsNarrow, 'CameraCentric');
 
 end
+=======
+% if plot
+%     
+%     % View reprojection errors
+%     h1=figure; showReprojectionErrors(cameraParamsNarrow);
+% 
+%     % Visualize pattern locations
+%     h2=figure; showExtrinsics(cameraParamsNarrow, 'CameraCentric');
+% 
+% end
+>>>>>>> 461196addc31add2389140318b9cf61ce9e0e932
     
 % Display parameter estimation errors
 displayErrors(estimationErrors, cameraParamsNarrow);
