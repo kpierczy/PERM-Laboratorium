@@ -1,17 +1,18 @@
 close all
 
+calibrationSession = load('../data/exercise_2/calibrationSession.mat');
+stereoParams = calibrationSession.calibrationSession.CameraParameters
+
 % Read dataSet directories
-dataSetLeft = dir('auvsi-cv-stereoVision/exercises/media/RecordedImages/left');
-dataSetRight = dir('auvsi-cv-stereoVision/exercises/media/RecordedImages/right');
+dataSetLeft = dir('../../auvsi-cv-stereoVision/exercises/media/RecordedImages/left');
+dataSetRight = dir('../../auvsi-cv-stereoVision/exercises/media/RecordedImages/right');
 
 sizeLeft = size(dataSetLeft);
 sizeRight = size(dataSetRight);
 
-% assuming equal count of images
-num = 10
+% assuming equal count of images, it's not checked!
 
-
-for i = 7 : 1 : 183
+for i = 3 : 1 : 183
     % Report exercise 2 point 1
     % Load image for further computation
     frameLeftDir = dataSetLeft(i);
@@ -117,17 +118,18 @@ for i = 7 : 1 : 183
  
     figure
     imshow(stereoAnaglyph(frameLeftRect(361:560,636:935,:), frameRightRect(361:560,636:935,:)));
-    % Check whether any object was found
+    % Check if any object was found
     if size(carDetected,1) > 0
-        % Report exercise 2 point 
+        % Report exercise 2 point 12
         croppedCarDetected = [carDetected(:,1:4) floor(carDetected(:,5))];
         [C, ia, ic] = unique(croppedCarDetected(:,5), 'first');
     
-    
-
+        % Draw found objects (after distance groupping)
         for i = 1 : 1 : size(ia,1)
+            % Draw rectange
             rectangle('Position', croppedCarDetected(ia(i),1:4),...
                         'EdgeColor','r', 'LineWidth', 1)
+            % Draw label
             text(double(croppedCarDetected(ia(i),1:1) - 10), ...
                     double(croppedCarDetected(ia(i),2:2) -20), ...
                     strcat(num2str(carDetected(i,5:5)), 'm'), ...
@@ -135,12 +137,11 @@ for i = 7 : 1 : 183
         end
     end
     
+    % Save image to 'detection/' directory with name of left frame
     name = frameLeftDir.name();
     name = name(1:end-4);
-    savePlot(strcat('detection/',name));
+    savePlot(strcat('../../detection/',name));
 
-    
     drawnow
-        
     
 end
