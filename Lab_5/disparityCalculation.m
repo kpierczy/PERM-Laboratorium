@@ -39,7 +39,7 @@ for i = 7 : 1 : 183
     % Convert to meters and create a pointCloud object
     points3D = points3D ./ 1000;
 
-    thresholds=[-2.5 1.5;2 6;7 50];  %-3 3 0 6 7 30
+    thresholds=[-1.5 1.5;2 6;7 50];  %-3 3 0 6 7 30
     points3D = thresholdPC(points3D,thresholds);
     %ptCloud = pointCloud(points3D, 'Color', frameLeftRect);
     %ptCloud = pointCloud(ptCloud.Location(361:560,:,:),'Color', ptCloud.Color(361:560,:,:));
