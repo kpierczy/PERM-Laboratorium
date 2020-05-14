@@ -80,9 +80,9 @@ for i = 3 : 1 : 183
     
     carDetected = [];
     
-    for sizeCarX = 100 : -1 : 20
+    for sizeCarX = 100 : -1 : 15
         %sizeCarX = 0
-        sizeCarY = 3;
+        sizeCarY = 1;
 
         distanceCar = 1300 / sizeCarX; 
         areaCar = sizeCarX * sizeCarY * distanceCar;
@@ -102,9 +102,9 @@ for i = 3 : 1 : 183
             end
         end
     end
-        for sizeCarY = 40 : -1 : 20
+    for sizeCarY = 50 : -1 : 20
         %sizeCarX = 0
-        sizeCarX = 10;
+        sizeCarX = 1;
 
         distanceCar = 1300 / sizeCarX; 
         areaCar = sizeCarX * sizeCarY * distanceCar;
@@ -124,11 +124,22 @@ for i = 3 : 1 : 183
             end
         end
     end
-    hold on
-    for i = 1 : 1 : size(carDetected,1)
-        rectangle('Position', carDetected(i,1:4),...
-                    'EdgeColor','r', 'LineWidth', 1)
+    
+    if size(carDetected,1)>0
+        k = size(unique(carDetected(:,5)),1)
     end
+    if size(carDetected,1) > k
+        carDetectedGrouped = carDetected(:,1:2) + floor(carDetected(:,3:4)/2) ;
+        [idx, C] = kmeans(carDetectedGrouped, k);  
+  
+        hold on
+        for i = 1 : 1 : size(C,1)
+            rectangle('Position', [C(i,1) C(i,2) 40 40],...
+                        'EdgeColor','r', 'LineWidth', 1)
+        end
+    end
+
+    
     drawnow
         
                 
