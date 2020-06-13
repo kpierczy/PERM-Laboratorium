@@ -1,3 +1,5 @@
+clear
+
 im1 = imread('img/ex_1.jpg');
 im2 = imread('img/ex_2.jpg');
 im3 = imread('img/ex_3.jpg');
