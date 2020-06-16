@@ -1,0 +1,49 @@
+\chapter*{Segmentacja obrazu}
+
+Celem pierwszego zadanie by³o przeprowadzenie segmentacji trzech otrzymanych obrazów ukazuj¹cych zbiory ró¿nokolorowych nakrêtek i~kostek okraszonych cyframi oraz znakami dzia³añ matematycznych. Obiekty znajdowa³y siê na powierzchni o~drewnianej teksturze. Zdjêcia wykonywane by³y w~ró¿nych warunkach oœwietleniowych.
+
+W~trakcie wykonywania zadania mieliœmy okazjê przetestowaæ ró¿ne podejœcia do tego zadania. Nasza pierwsza próba polega³a na dobraniu takich parametrów filtracji pikseli, aby mo¿liwe by³o wysegmentowanie jedynie t³a obrazów. W~tym celu wykorzystaliœmy dostepn¹ w~œrodowisku \verb Matlab  aplikacjê \textit{Color Thresholder}. Umo¿liwia ona okreœlenie progó filtracji na bazie ka¿dego z~parametrów wybranej przestrzeni barw. Oczywistym wyborem co do przestrzeni by³a oczywiœcie HSV (\textit{Hue-Saturation-Value}). Pierwszy z~obrazów uda³o nam siê przefiltrowaæ zgodnie z~za³o¿eniami (rys. \ref{good_filter}). Gdy jednak wygenerowaliœmy kod filtra i~zastosowaliœmy go do pozosta³ych obrazów efekt by³ dalece niezadowalaj¹cy (rys. \ref{bad_filter}).
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.25]{img/first.jpg}
+    \caption{Pierwsza próba segmentacji obrazu}
+    \label{good_filter}
+\end{figure}
+
+\vskip 1cm
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.2]{img/second.jpg}
+    \caption{Nieudana próba segmentacji kolejnego z~obrazów}
+    \label{good_filter}
+\end{figure}
+
+Po próbach odnnalezienia w³aœciwych nastaw w~innych przestrzeniach barw zdecydowaliœmy siê wreszcie na skonstruowanie oddzielnego filtra dla wszystkich kolorów znajduj¹cych siê na obrazach. Na bazie wspomnianej ju¿ apllikacji stworzonych zosta³o 8 filtrów maskuj¹cych. Ka¿dy z~nich zosta³ skalibrowany rêcznie tak, aby przepuszcza³ jedynie okreœlon¹ barwê ze wszystki trzech zdjêæ. Podejœcie takie, chocia¿ bardziej czasoch³onne, pozwala na poszerzenie marginesu b³êdu w~przypadku, gdy segmentowane maj¹ byæ zdjêcia niedostêpne na etapie projektowania. Dodatkowo, aby móc sobie pozwoliæ na szersze pasma, ka¿da ze stworzonych masek zosta³a przetworzona prez dedykowan¹ sekwencjê operacji morfologicznych. Pozwoli³y one na 'zalepienie' dziur w~masce oraz doszlifowanie konturów obiektów. Rezultaty zosta³y przedstawione na poni¿szych rysunkach. Dodatkowo, do³¹czone zosta³o zdjêcie z~nastêpnego projektu aby pokazaæ, jak filtr radzi sobie z~obrazami, pod k¹tem których nie by³ przygotowywany.
+
+\begin{figure}
+    \centering
+    \includegraphics[scale=0.2]{img/ex_3.jpg}
+    \label{ex_3}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[scale=0.215]{img/ex_1.jpg}
+    \label{ex_1}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[scale=0.25]{img/ex_2.jpg}
+    \label{ex_2}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[scale=0.18]{img/ex_4.jpg}
+    \label{ex_4}
+\end{figure}
+
+
+

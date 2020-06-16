@@ -2,6 +2,7 @@ function [BW, masked] = filterRGB(RGB)
 
 % Gather masks
 [   yellowBW, ~] =    yellow(RGB);
+[   orangeBW, ~] =    orange(RGB);
 [    whiteBW, ~] =     white(RGB);
 [      redBW, ~] =       red(RGB);
 [     pinkBW, ~] =      pink(RGB);
@@ -11,7 +12,7 @@ function [BW, masked] = filterRGB(RGB)
 [     blueBW, ~] =      blue(RGB);
 
 % Create summary mask
-BW = yellowBW | whiteBW | redBW | pinkBW | ...
+BW = yellowBW | orangeBW | whiteBW | redBW | pinkBW | ...
      lightBlueBW | grenBW | darkBlueBW | blueBW;
 
 % Perform filtering

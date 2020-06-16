@@ -1,0 +1,35 @@
+\chapter*{Analiza regionów}
+
+Drugie zadanie, korzystaj¹c z~efektów poprzedniego, polega³o na przeanalizowaniu przefiltrowanych zdjêæ pod k¹tem: kszta³tu, barwy, œrodka masy obiektów, orientacji obiektów oraz ich rozmiaru. Wszystkie te cechy mo¿liwe by³y do okreœlenia dziêki wykorzystaniu funkcji  \verb regionprops.  Przy jej u¿yciu uzyskiwaliœmy informacje o~po³o¿eniu obiektów, ich powierzchni, obwodzie, punktach ekstremalnych (najbardziej wysuniêtych w~danym kierunku) oraz o~minimalnym prostok¹cie opisanym na obiekcie. Dlak ka¿dego rekordu zwróconego przez funkcjê przeprowadzana by³a ta sama procedura identyfikacyjna.
+
+W~pierwszej kolejnosci zapisywaliœmy do przygotowanej struktury danych po³o¿enie obiektu, poniewa¿ wartoœæ ta by³a dostepna bezpoœrednio. Nastêpnie wycinany by³ fragment obrazu zawieraj¹cy jedynie analizowany obiekt (wykorzystano tu wspomniany wy¿ej minimalny prostok¹t). W~regionie tym, przekonwertowanym z~przestrzeni RGB do HSV, sprawdzana by³a najpierw najczêœciej wystepuj¹ca wartoœæ saturacji, a~nastepnie najczêœciej wystepuj¹ca barwa. Je¿eli nasycenie przekracza³o pewien próg, obiekt by³ klasyfikowany jako bia³y. W~pozosta³ych przypadkach kolor by³ oceniany na bazie drugiego z~parametrów.Ka¿dy obiekt zosta³ zaklasyfikowany do jednej z~7~grób kolorystycznych.
+
+Kolejnym krokiem by³o policzenie zwartoœci obiektu (pos³uguj¹c siê wartoœciami pola i~obwodu obiektu). Jako, ¿e mieliœmy wykryuwaæ tylko 3~rodzaje kszta³tów (kwadratowy, okr¹g³y i~pozosta³e) progowanie tej wartoœci by³o wystarczaj¹ce do okreslenia prawid³owego kszta³tu wiêkszoœci obiektów. Gdy okreœlony zosta³ kszta³t, na bazie odpowiednich wzorów, mo¿liwa by³a estymacja rozmiaru (œrednicy w~przypadku kó³ i~d³ugoœci boku w~przypadku kwadratów). Orientacja obiektów zosta³a z~kolei okreœlona jako wektor zaczepiony w~œrodku masy obiektu i~skierowany w~stronê skrajnego prawego, górnego piksela obiektu (w~wiêkszoœci przypadkó pozwala³o to wskazaæ jeden z~rogów obiektów kwadratowych). Niestety orientacja ta nie uwzglêdnia³a orientacji znaków znajdujacych siê na obiektach. Ich analiza by³aby zbyt z³o¿ona jak na ramy tych zajêæ laboratoryjnych.
+
+\vskip 0.8cm
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.18]{img/desc_3.jpg}
+    \label{ex_3}
+\end{figure}
+\vskip 0.8cm
+
+Ostatecznie, na zadany obraz by³a maska, która w~sposób wizualny ukayzwa³a efekt dzia³ania detektora - wokó³ ka¿dego obiektu narysowany zosta³ kontur o~kolorze, kszta³cie i~rozmiarze odpowiadaj¹cym wartoœciom ustalonym w~trakcie analizy. Efekty naszej pracy zosta³y ukazane na zdjêciach.
+
+\begin{figure}
+    \centering
+    \includegraphics[scale=0.215]{img/desc_1.jpg}
+    \label{ex_1}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[scale=0.25]{img/desc_2.jpg}
+    \label{ex_2}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[scale=0.18]{img/desc_4.jpg}
+    \label{ex_4}
+\end{figure}

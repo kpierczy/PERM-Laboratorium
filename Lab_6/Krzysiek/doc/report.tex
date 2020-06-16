@@ -1,0 +1,162 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Header %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[a4paper,titlepage,11pt,twosides,floatssmall]{mwrep}
+
+\usepackage[left=2.5cm,right=2.5cm,top=2.5cm,bottom=2.5cm]{geometry} % Pages' geometry and layout
+\usepackage[OT1]{fontenc} % Defines encoding for fonts (OT1 - original TeX encoding) 
+\usepackage{polski} % Polish language specifics
+\usepackage{amsmath} % Mathematical commands
+\usepackage{amsfonts} % Fonts commands
+\usepackage{amssymb} % Symbolical commands
+\usepackage{graphicx} % Importing external graphics
+\usepackage{float} % Forcing plot's position
+\usepackage{url} % Web-related text (urls, mail adresses, etc.)
+\usepackage{tikz} % Creating graphical elements like lines, dots, curves, figures
+\usepackage{rotating} % Rotating objects of an arbitrary angle
+\usepackage[percent]{overpic} % Makes it able to put LaTeX commands onto the included graphics (with a dedicated environment)
+\usepackage[cp1250]{inputenc} % Non-standrard encoding of the LaTeX files
+\usepackage{xcolor} % Easy driver-independent access to several kinds of color tints, shades, tones, and mixes of arbitrary colors
+\usepackage{pgfplots} % High-quality function plots in normal or logarithmic scaling with a user-friendly interface
+\usepackage{listings} % Source code printer
+\usepackage{matlab-prettifier} % Matlab source code printer
+\usepackage{enumitem} % List environments
+\usepackage{siunitx} % Physical units
+\usepackage{subfig} % Subfigures
+\usepackage{placeins} % Places figures in sections they were introduced
+
+% tikz packages choice
+\usetikzlibrary{arrows,calc,decorations.markings,math,arrows.meta}
+\usetikzlibrary{pgfplots.groupplots}
+
+% siunitx settings
+\sisetup{detect-weight,exponent-product=\cdot,output-decimal-marker={,},per-mode=symbol,binary-units=true,range-phrase={-},range-units=single}
+\SendSettingsToPgf % unifies settings of the pgfplots package with siunitx package
+
+% listings settings
+\definecolor{gray}{rgb}{0.95,0.95,0.95}
+\lstset{
+	backgroundcolor=\color{gray},
+	frame=single,
+	breaklines=true,
+}
+
+% listings styles
+\lstdefinestyle{customlatex}{
+	basicstyle=\footnotesize\ttfamily,
+	% basicstyle=\small\ttfamily,
+}
+\lstdefinestyle{customc}{
+	breaklines=true,
+	frame=tb,
+	language=C,
+	xleftmargin=0pt,
+	showstringspaces=false,
+	basicstyle=\small\ttfamily,
+	keywordstyle=\bfseries\color{green!40!black},
+	commentstyle=\itshape\color{purple!40!black},
+	identifierstyle=\color{blue},
+	stringstyle=\color{orange},
+}
+\lstdefinestyle{custommatlab}{
+	captionpos=t,
+	breaklines=true,
+	frame=tb,
+	xleftmargin=0pt,
+	language=matlab,
+	showstringspaces=false,
+	% basicstyle=\footnotesize\ttfamily,
+	basicstyle=\scriptsize\ttfamily,
+	keywordstyle=\bfseries\color{green!40!black},
+	commentstyle=\itshape\color{purple!40!black},
+	identifierstyle=\color{blue},
+	stringstyle=\color{orange},
+}
+
+% Text field size (without header and footer - bez "Â¿ywej paginy")
+\textwidth 160mm \textheight 247mm
+
+% pgfplots settings
+\pgfplotsset{
+	tick label style={font=\scriptsize},
+	label style={font=\small},
+	legend style={font=\small},
+	title style={font=\small}
+}
+
+\def\figurename{Rys.}
+\def\tablename{Tab.}
+
+% Max number of floating elements configuration
+\setcounter{topnumber}{0} % default : 2
+\setcounter{bottomnumber}{3} % default : 1
+\setcounter{totalnumber}{5} % default : 3
+
+\renewcommand{\textfraction}{0.01} % default : 0.2
+\renewcommand{\topfraction}{0.95} % default : 0.7
+\renewcommand{\bottomfraction}{0.95} % default : 0.3
+\renewcommand{\floatpagefraction}{0.35} % default : 0.5
+
+% Path to the graphics
+\graphicspath{ {./img/} }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Document utilities %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Title Page Data
+\title{\bf Sprawozdanie z~laboratorium nr 6\vskip 0.1cm}
+\author{Marcin Michalski, Krzysztof Pierczyk}
+\date{2020}
+
+% Maketitle macro
+\makeatletter
+\renewcommand{\maketitle}
+{
+	\begin{titlepage}
+		\begin{center}{
+			\LARGE {\bf
+			Wydziaa³ Elektroniki i Technik Informacyjnych}}\\
+			\vspace{0.4cm}
+			{\LARGE {\bf Politechnika Warszawska}}\\
+			\vspace{0.3cm}
+		\end{center}
+		\vspace{5cm}
+		\begin{center}
+			{\bf \LARGE Percepcja maszyn \vskip 0.1cm}
+		\end{center}
+		\vspace{1cm}
+		\begin{center}
+			{\bf \LARGE \@title}
+		\end{center}
+		\vspace{2cm}
+		\begin{center}
+			{\bf \Large \@author \par}
+		\end{center}
+		\vspace*{\stretch{6}}
+		\begin{center}
+			\bf{\large{Warszawa, \@date\vskip 0.1cm}}
+		\end{center}
+	\end{titlepage}
+}
+\makeatother
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Document %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+% Pages' style formatting
+\frenchspacing
+\pagestyle{uheadings}
+
+% Use maketitle macro to build title page
+\maketitle
+
+% Insert parts of the report
+\input{exercise_1.tex}
+\input{exercise_2.tex}
+
+\end{document}
