@@ -16,7 +16,7 @@ W~trakcie wykonywania zadania mieliœmy okazjê przetestowaæ ró¿ne podejœcia do te
     \centering
     \includegraphics[scale=0.2]{img/second.jpg}
     \caption{Nieudana próba segmentacji kolejnego z~obrazów}
-    \label{good_filter}
+    \label{bad_filter}
 \end{figure}
 
 Po próbach odnnalezienia w³aœciwych nastaw w~innych przestrzeniach barw zdecydowaliœmy siê wreszcie na skonstruowanie oddzielnego filtra dla wszystkich kolorów znajduj¹cych siê na obrazach. Na bazie wspomnianej ju¿ apllikacji stworzonych zosta³o 8 filtrów maskuj¹cych. Ka¿dy z~nich zosta³ skalibrowany rêcznie tak, aby przepuszcza³ jedynie okreœlon¹ barwê ze wszystki trzech zdjêæ. Podejœcie takie, chocia¿ bardziej czasoch³onne, pozwala na poszerzenie marginesu b³êdu w~przypadku, gdy segmentowane maj¹ byæ zdjêcia niedostêpne na etapie projektowania. Dodatkowo, aby móc sobie pozwoliæ na szersze pasma, ka¿da ze stworzonych masek zosta³a przetworzona prez dedykowan¹ sekwencjê operacji morfologicznych. Pozwoli³y one na 'zalepienie' dziur w~masce oraz doszlifowanie konturów obiektów. Rezultaty zosta³y przedstawione na poni¿szych rysunkach. Dodatkowo, do³¹czone zosta³o zdjêcie z~nastêpnego projektu aby pokazaæ, jak filtr radzi sobie z~obrazami, pod k¹tem których nie by³ przygotowywany.

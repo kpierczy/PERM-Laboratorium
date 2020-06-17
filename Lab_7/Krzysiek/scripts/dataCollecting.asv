@@ -1,0 +1,42 @@
+clear
+
+% Cubes' size [px]
+heigth = 140;
+width = 140;
+
+% Read base image
+im = imread('data/img/ex_4.jpg');
+
+% Get regions statistics
+[stats, ~] = descriptor(im);
+
+% Loop over all regions to parse, label and save spectografs of characters
+for i = 1:size(stats, 1)
+    
+    % Crop image
+    crop = imcrop(im, [stats(i).origin - [width / 2 heigth / 2], ...
+                       width, heigth]);
+                   
+   % Equalize histogram and filter image to smooth edges
+    smoothCrop = adapthisteq(rgb2gray(crop));
+    smoothCrop = imgaussfilt(crop, 1);
+    
+    % Get image edges
+    edges = edge(rgb2gray(smoothCrop));
+    
+    % Perform series of morphological operations to get rid of trash
+    radius = 5;
+    se = strel('diamond', radius);
+    edges = imclose(edges, se);
+    edges = imdilate(edges, se);
+    edges = imfill(edges, 'holes');
+    edges = imerode(edges, se);
+    edges = imerode(edges, se);
+    edges = imdilate(edges, se);
+    
+    % 
+    
+    
+    imshow(edges)
+    
+end
